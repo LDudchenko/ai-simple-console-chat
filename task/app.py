@@ -2,6 +2,7 @@ import asyncio
 
 from task.clients.anthropic.client import AnthropicAIClient
 from task.clients.openai.client import OpenAIClient
+from task.clients.openai.custom_client import CustomOpenAIClient
 from task.constants import (
     DEFAULT_SYSTEM_PROMPT, OPENAI_ENDPOINT, ANTHROPIC_ENDPOINT,
     OPENAI_API_KEY, ANTHROPIC_API_KEY,
@@ -13,14 +14,20 @@ from task.models.message import Message
 from task.models.role import Role
 
 
-def choose_settings(openai_client, anthropic_client, current_client=None, current_stream=None):
+def choose_settings(openai_client, custom_openai_client,
+                    anthropic_client,
+                    current_client=None, current_stream=None):
     print("\nConfigure settings:")
-    model_choice = input("Choose model [openai/anthropic]: ").strip().lower()
+    model_choice = input("Choose model [openai/anthropic/custom_openai/custom_anthropic]: ").strip().lower()
 
     if model_choice == "openai":
         client = openai_client
     elif model_choice == "anthropic":
         client = anthropic_client
+    elif model_choice == "custom_openai":
+        client = custom_openai_client
+    # elif model_choice == "custom_anthropic":
+    #     client = custom_anthropic_client
     else:
         print("Invalid choice. Keeping current model.")
         client = current_client
@@ -32,15 +39,16 @@ def choose_settings(openai_client, anthropic_client, current_client=None, curren
 
     stream = input(prompt).strip().lower() == "y"
 
-    print(f"Settings: model={ 'OpenAI' if client == openai_client else 'Anthropic' }, stream={'on' if stream else 'off'}\n")
+    print(f"Settings: model={client.__class__.__name__}, stream={'on' if stream else 'off'}\n")
     return client, stream
 
 
 async def start():
     openai_client = OpenAIClient(OPENAI_ENDPOINT, GPT_4_MODEL, DEFAULT_SYSTEM_PROMPT, OPENAI_API_KEY)
+    custom_openai_client = CustomOpenAIClient(OPENAI_ENDPOINT, GPT_4_MODEL, DEFAULT_SYSTEM_PROMPT, OPENAI_API_KEY)
     anthropic_client = AnthropicAIClient(ANTHROPIC_ENDPOINT, CLAUDE_MODEL, DEFAULT_SYSTEM_PROMPT, ANTHROPIC_API_KEY)
 
-    current_client, stream = choose_settings(openai_client, anthropic_client)
+    current_client, stream = choose_settings(openai_client, custom_openai_client, anthropic_client)
 
     conversation = Conversation()
     print("\n🤖 Simple Console AI Chat (type 'exit' to quit, '/switch' to change settings)")

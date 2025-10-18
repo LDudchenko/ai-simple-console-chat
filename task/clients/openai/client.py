@@ -41,10 +41,3 @@ class OpenAIClient(BaseOpenAIClient):
             answer += delta
         print()
         return Message(Role.AI, answer)
-
-
-    @staticmethod
-    def _prepare_message_history(messages):
-        system_message = Message(Role.SYSTEM, DEFAULT_SYSTEM_PROMPT)
-        messages_with_system_prompt = [system_message] + messages
-        return [message.to_dict() for message in messages_with_system_prompt]

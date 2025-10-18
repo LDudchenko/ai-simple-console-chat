@@ -18,7 +18,9 @@ class CustomAnthropicAIClient(AIClient):
         # - Parse response
         # - Print response to console
         # - Return AI message
-        raise NotImplementedError
+        # raise NotImplementedError
+        pass
+
 
     async def stream_completion(self, messages: list[Message], **kwargs) -> Message:
         #TODO:
@@ -30,4 +32,5 @@ class CustomAnthropicAIClient(AIClient):
         # - Parse response
         # - Print chunks to console
         # - Return AI message
-        raise NotImplementedError
+        # raise NotImplementedError
+        pass
