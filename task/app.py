@@ -10,8 +10,32 @@ from task.models.conversation import Conversation
 from task.models.message import Message
 from task.models.role import Role
 
+BOT_GOODBYE_MESSAGE = "Bot: Goodbye!"
+
+STOP_CONVERSATION_WORDS = ["exit", "quit", "bye"]
+
 
 async def start(stream: bool, client: AIClient) -> None:
+    conversation = Conversation()
+
+    print("🤖 Simple Console Chat (type 'exit' to quit)")
+    print("-" * 40)
+
+    while True:
+        user_input = input("You: ")
+        user_message = Message(Role.USER, user_input)
+        conversation.add_message(user_message)
+
+        if user_input.lower() in STOP_CONVERSATION_WORDS:
+            print(BOT_GOODBYE_MESSAGE)
+            break
+
+        print(f"Bot: You said '{user_input}'. That's interesting!")
+        if stream:
+            ai_message = client.stream_completion(conversation.get_messages())
+        else:
+            ai_message = client.get_completion(conversation.get_messages())
+        print(ai_message.content)
     #TODO:
     # Main chat loop that handles user interaction with AI clients.
     # 1. Create a conversation object to maintain chat history
@@ -19,7 +43,6 @@ async def start(stream: bool, client: AIClient) -> None:
     # 3. Add messages to conversation
     # 4. Call AI client methods (both streaming and non-streaming)
     # 5. Handle the conversation flow
-    raise NotImplementedError
 
 
 #TODO:
@@ -30,7 +53,8 @@ async def start(stream: bool, client: AIClient) -> None:
 #   - CustomAnthropicAIClient
 # Run application:
 #   Use asyncio.run() method to run the application (call `start` method in `run`)
-raise NotImplementedError
+# raise NotImplementedError
+asyncio.run(start(False, OpenAIClient(OPENAI_ENDPOINT, "", DEFAULT_SYSTEM_PROMPT, OPENAI_API_KEY)))
 
 
 #TODO:

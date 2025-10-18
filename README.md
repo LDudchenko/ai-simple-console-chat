@@ -48,12 +48,12 @@ By completing this task, you will learn:
    ├── clients/              
    │   ├── base.py               ✅ Complete
    │   ├── anthropic/    
-   │   │   ├── client.py         🚧 TODO: OPTIONAL Implement methods
+   │   │   ├── client.py         🚧 TODO: Implement methods
    │   │   └── custom_client.py  🚧 TODO: OPTIONAL Implement methods
    │   └── openai/    
    │       ├── base.py/          🚧 TODO: Implement constructor
    │       ├── client.py         🚧 TODO: Implement methods
-   │       └── custom_client.py  🚧 TODO: Implement methods
+   │       └── custom_client.py  🚧 TODO: OPTIONAL Implement methods
    ├── app.py                    🚧 TODO: Implement main logic
    └── constants.py              🚧 Update API keys
    ```
