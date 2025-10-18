@@ -10,7 +10,8 @@ from task.models.conversation import Conversation
 from task.models.message import Message
 from task.models.role import Role
 
-BOT_GOODBYE_MESSAGE = "Bot: Goodbye!"
+BOT_PREFIX = "Bot: "
+BOT_GOODBYE_MESSAGE = "Goodbye!"
 
 STOP_CONVERSATION_WORDS = ["exit", "quit", "bye"]
 
@@ -27,15 +28,14 @@ async def start(stream: bool, client: AIClient) -> None:
         conversation.add_message(user_message)
 
         if user_input.lower() in STOP_CONVERSATION_WORDS:
-            print(BOT_GOODBYE_MESSAGE)
+            print(f"{BOT_PREFIX}{BOT_GOODBYE_MESSAGE}")
             break
 
-        print(f"Bot: You said '{user_input}'. That's interesting!")
         if stream:
             ai_message = client.stream_completion(conversation.get_messages())
         else:
             ai_message = client.get_completion(conversation.get_messages())
-        print(ai_message.content)
+        print(f"{BOT_PREFIX}{ai_message.content}")
     #TODO:
     # Main chat loop that handles user interaction with AI clients.
     # 1. Create a conversation object to maintain chat history
