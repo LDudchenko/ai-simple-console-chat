@@ -12,7 +12,7 @@ class CustomAnthropicAIClient(AIClient):
 
     def get_completion(self, messages: list[Message], **kwargs) -> Message:
         headers = self._prepare_headers()
-        payload = self._prepare_payload(messages)
+        payload = self._prepare_payload(messages, False)
 
         response = requests.post(self._endpoint, headers=headers, json=payload)
         response.raise_for_status()
@@ -24,25 +24,26 @@ class CustomAnthropicAIClient(AIClient):
 
 
     async def stream_completion(self, messages: list[Message], **kwargs) -> Message:
-        #TODO:
-        # https://docs.anthropic.com/en/docs/build-with-claude/streaming
-        # - Prepare headers with api key, anthropic version and content type
-        # - Add System prompt
-        # - Execute post request to AI API (use `aihttp`)
-        # - Handle stream with chunks
-        # - Parse response
-        # - Print chunks to console
-        # - Return AI message
-        # raise NotImplementedError
-        pass
+        headers = self._prepare_headers()
+        payload = self._prepare_payload(messages, True)
 
-    def _prepare_payload(self, messages):
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self._endpoint, headers=headers, json=payload) as resp:
+                if resp.status != 200:
+                    error_text = await resp.text()
+                    raise Exception(f"Anthropic API error {resp.status}: {error_text}")
+                answer = await self._process_stream_response(resp)
+
+        return Message(role=Role.AI, content=answer)
+
+    def _prepare_payload(self, messages, stream):
         formatted_messages = [message.to_dict() for message in messages]
         return {
             "model": CLAUDE_MODEL,
             "messages": formatted_messages,
             "max_tokens": MAX_TOKENS,
             "system": DEFAULT_SYSTEM_PROMPT,
+            "stream": True
         }
 
     def _prepare_headers(self):
@@ -51,3 +52,32 @@ class CustomAnthropicAIClient(AIClient):
             "Content-Type": "application/json",
             "Anthropic-Version": "2023-06-01"
         }
+
+
+    async def _process_stream_response(self, resp):
+        print(BOT_PREFIX, end="")
+        answer = ""
+        async for line in resp.content:
+            line = line.decode().strip()
+            if not line:
+                continue
+
+            if line.startswith("event:"):
+                event_type = line[len("event:"):].strip()
+                continue
+
+            if line.startswith("data:"):
+                data_json = line[len("data:"):].strip()
+                data = json.loads(data_json)
+
+                if event_type == "content_block_delta":
+                    delta = data.get("delta", {})
+                    if delta.get("type") == "text_delta":
+                        content = delta.get("text", "")
+                        print(content, end="")
+                        answer += content
+                elif event_type == "message_delta":
+                    if data.get("delta", {}).get("stop_reason") == "end_turn":
+                        print()
+
+        return answer
