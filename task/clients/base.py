@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
+from task.constants import DEFAULT_SYSTEM_PROMPT
 from task.models.message import Message
+from task.models.role import Role
 
 
 class AIClient(ABC):

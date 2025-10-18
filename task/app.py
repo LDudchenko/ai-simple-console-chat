@@ -6,7 +6,7 @@ from task.clients.base import AIClient
 from task.clients.openai.client import OpenAIClient
 from task.clients.openai.custom_client import CustomOpenAIClient
 from task.constants import DEFAULT_SYSTEM_PROMPT, OPENAI_ENDPOINT, ANTHROPIC_API_KEY, ANTHROPIC_ENDPOINT, \
-    OPENAI_API_KEY, STOP_CONVERSATION_WORDS, BOT_PREFIX, BOT_GOODBYE_MESSAGE
+    OPENAI_API_KEY, STOP_CONVERSATION_WORDS, BOT_PREFIX, BOT_GOODBYE_MESSAGE, GPT_4_MODEL, CLAUDE_MODEL
 from task.models.conversation import Conversation
 from task.models.message import Message
 from task.models.role import Role
@@ -34,4 +34,6 @@ async def start(stream: bool, client: AIClient) -> None:
         conversation.add_message(ai_message)
 
 
-asyncio.run(start(True, OpenAIClient(OPENAI_ENDPOINT, "gpt-4o", DEFAULT_SYSTEM_PROMPT, OPENAI_API_KEY)))
+open_ai_client = OpenAIClient(OPENAI_ENDPOINT, GPT_4_MODEL, DEFAULT_SYSTEM_PROMPT, OPENAI_API_KEY)
+anthropic_ai_client = AnthropicAIClient(ANTHROPIC_ENDPOINT, CLAUDE_MODEL, DEFAULT_SYSTEM_PROMPT, ANTHROPIC_API_KEY)
+asyncio.run(start(True, anthropic_ai_client))
