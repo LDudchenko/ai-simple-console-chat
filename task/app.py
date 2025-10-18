@@ -5,15 +5,11 @@ from task.clients.anthropic.custom_client import CustomAnthropicAIClient
 from task.clients.base import AIClient
 from task.clients.openai.client import OpenAIClient
 from task.clients.openai.custom_client import CustomOpenAIClient
-from task.constants import DEFAULT_SYSTEM_PROMPT, OPENAI_ENDPOINT, ANTHROPIC_API_KEY, ANTHROPIC_ENDPOINT, OPENAI_API_KEY
+from task.constants import DEFAULT_SYSTEM_PROMPT, OPENAI_ENDPOINT, ANTHROPIC_API_KEY, ANTHROPIC_ENDPOINT, \
+    OPENAI_API_KEY, STOP_CONVERSATION_WORDS, BOT_PREFIX, BOT_GOODBYE_MESSAGE
 from task.models.conversation import Conversation
 from task.models.message import Message
 from task.models.role import Role
-
-BOT_PREFIX = "Bot: "
-BOT_GOODBYE_MESSAGE = "Goodbye!"
-
-STOP_CONVERSATION_WORDS = ["exit", "quit", "bye"]
 
 
 async def start(stream: bool, client: AIClient) -> None:
@@ -32,18 +28,10 @@ async def start(stream: bool, client: AIClient) -> None:
             break
 
         if stream:
-            ai_message = client.stream_completion(conversation.get_messages())
+            ai_message = await client.stream_completion(conversation.get_messages())
         else:
             ai_message = client.get_completion(conversation.get_messages())
         conversation.add_message(ai_message)
-        print(f"{BOT_PREFIX}{ai_message.content}")
-    #TODO:
-    # Main chat loop that handles user interaction with AI clients.
-    # 1. Create a conversation object to maintain chat history
-    # 2. Handle user input in a loop
-    # 3. Add messages to conversation
-    # 4. Call AI client methods (both streaming and non-streaming)
-    # 5. Handle the conversation flow
 
 
-asyncio.run(start(False, OpenAIClient(OPENAI_ENDPOINT, "gpt-4o", DEFAULT_SYSTEM_PROMPT, OPENAI_API_KEY)))
+asyncio.run(start(True, OpenAIClient(OPENAI_ENDPOINT, "gpt-4o", DEFAULT_SYSTEM_PROMPT, OPENAI_API_KEY)))

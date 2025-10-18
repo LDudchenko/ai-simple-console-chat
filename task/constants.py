@@ -7,3 +7,7 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
 
 ANTHROPIC_API_KEY=os.getenv('ANTHROPIC_API_KEY', '')
 ANTHROPIC_ENDPOINT = "https://api.anthropic.com/v1/messages"
+
+BOT_PREFIX = "Bot: "
+BOT_GOODBYE_MESSAGE = "Goodbye!"
+STOP_CONVERSATION_WORDS = ["exit", "quit", "bye"]
