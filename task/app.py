@@ -1,6 +1,7 @@
 import asyncio
 
 from task.clients.anthropic.client import AnthropicAIClient
+from task.clients.anthropic.custom_client import CustomAnthropicAIClient
 from task.clients.openai.client import OpenAIClient
 from task.clients.openai.custom_client import CustomOpenAIClient
 from task.constants import (
@@ -15,7 +16,7 @@ from task.models.role import Role
 
 
 def choose_settings(openai_client, custom_openai_client,
-                    anthropic_client,
+                    anthropic_client, custom_anthropic_client,
                     current_client=None, current_stream=None):
     print("\nConfigure settings:")
     model_choice = input("Choose model [openai/anthropic/custom_openai/custom_anthropic]: ").strip().lower()
@@ -26,8 +27,8 @@ def choose_settings(openai_client, custom_openai_client,
         client = anthropic_client
     elif model_choice == "custom_openai":
         client = custom_openai_client
-    # elif model_choice == "custom_anthropic":
-    #     client = custom_anthropic_client
+    elif model_choice == "custom_anthropic":
+        client = custom_anthropic_client
     else:
         print("Invalid choice. Keeping current model.")
         client = current_client
@@ -47,8 +48,9 @@ async def start():
     openai_client = OpenAIClient(OPENAI_ENDPOINT, GPT_4_MODEL, DEFAULT_SYSTEM_PROMPT, OPENAI_API_KEY)
     custom_openai_client = CustomOpenAIClient(OPENAI_ENDPOINT, GPT_4_MODEL, DEFAULT_SYSTEM_PROMPT, OPENAI_API_KEY)
     anthropic_client = AnthropicAIClient(ANTHROPIC_ENDPOINT, CLAUDE_MODEL, DEFAULT_SYSTEM_PROMPT, ANTHROPIC_API_KEY)
+    custom_anthropic_client = CustomAnthropicAIClient(ANTHROPIC_ENDPOINT, CLAUDE_MODEL, DEFAULT_SYSTEM_PROMPT, ANTHROPIC_API_KEY)
 
-    current_client, stream = choose_settings(openai_client, custom_openai_client, anthropic_client)
+    current_client, stream = choose_settings(openai_client, custom_openai_client, anthropic_client, custom_anthropic_client)
 
     conversation = Conversation()
     print("\n🤖 Simple Console AI Chat (type 'exit' to quit, '/switch' to change settings)")

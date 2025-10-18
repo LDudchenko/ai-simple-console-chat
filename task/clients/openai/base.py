@@ -9,7 +9,7 @@ from task.models.role import Role
 class BaseOpenAIClient(AIClient, ABC):
 
     def __init__(self, endpoint: str, model_name: str, system_prompt: str, api_key: str):
-        super().__init__(endpoint, model_name, api_key, system_prompt)
+        super().__init__(endpoint, model_name, system_prompt, api_key)
 
     @staticmethod
     def _prepare_message_history(messages):

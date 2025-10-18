@@ -7,7 +7,7 @@ from task.models.role import Role
 
 class AIClient(ABC):
 
-    def __init__(self, endpoint: str, model_name: str, api_key: str, system_prompt: str):
+    def __init__(self, endpoint: str, model_name: str, system_prompt: str, api_key: str,):
         if not api_key or api_key.strip() == "":
             raise ValueError("API key cannot be null or empty")
 
