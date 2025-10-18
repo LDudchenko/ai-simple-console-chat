@@ -66,7 +66,8 @@ async def start():
             break
 
         if user_input.startswith("/switch"):
-            current_client, stream = choose_settings(openai_client, anthropic_client, current_client, stream)
+            current_client, stream = choose_settings(openai_client, custom_openai_client, anthropic_client,
+                                                     custom_anthropic_client, current_client, stream)
             continue
 
         user_message = Message(Role.USER, user_input)
