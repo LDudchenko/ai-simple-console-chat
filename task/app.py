@@ -19,8 +19,8 @@ STOP_CONVERSATION_WORDS = ["exit", "quit", "bye"]
 async def start(stream: bool, client: AIClient) -> None:
     conversation = Conversation()
 
-    print("🤖 Simple Console Chat (type 'exit' to quit)")
-    print("-" * 40)
+    print("🤖 Simple Console AI Chat (type 'exit' to quit)")
+    print("-" * 45)
 
     while True:
         user_input = input("You: ")
