@@ -33,31 +33,7 @@ class CustomOpenAIClient(BaseOpenAIClient):
                 if resp.status != 200:
                     error_text = await resp.text()
                     raise Exception(f"OpenAI API error {resp.status}: {error_text}")
-
-                print(BOT_PREFIX, end="")
-
-                answer = ""
-                async for line in resp.content:
-                    if not line:
-                        continue
-
-                    decoded_line = line.decode("utf-8").strip()
-
-                    if not decoded_line.startswith("data:"):
-                        continue
-
-                    if decoded_line == "data: [DONE]":
-                        print()
-                        break
-
-                    try:
-                        data = json.loads(decoded_line[len("data: "):])
-                        delta = data["choices"][0]["delta"].get("content", "")
-                        if delta:
-                            print(delta, end="", flush=True)
-                            answer += delta
-                    except Exception:
-                        continue
+                answer = await self._process_stream_response(resp)
 
         return Message(role=Role.AI, content=answer)
 
@@ -74,3 +50,29 @@ class CustomOpenAIClient(BaseOpenAIClient):
             "Authorization": f"Bearer {self._api_key}",
             "Content-Type": "application/json",
         }
+
+    async def _process_stream_response(self, resp):
+        print(BOT_PREFIX, end="")
+        answer = ""
+        async for line in resp.content:
+            if not line:
+                continue
+
+            decoded_line = line.decode("utf-8").strip()
+
+            if not decoded_line.startswith("data:"):
+                continue
+
+            if decoded_line == "data: [DONE]":
+                print()
+                break
+
+            try:
+                data = json.loads(decoded_line[len("data: "):])
+                content = data["choices"][0]["delta"].get("content", "")
+                if content:
+                    print(content, end="")
+                    answer += content
+            except Exception:
+                continue
+        return answer
