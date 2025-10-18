@@ -39,11 +39,11 @@ class CustomAnthropicAIClient(AIClient):
     def _prepare_payload(self, messages, stream):
         formatted_messages = [message.to_dict() for message in messages]
         return {
-            "model": CLAUDE_MODEL,
+            "model": self._model_name,
             "messages": formatted_messages,
             "max_tokens": MAX_TOKENS,
             "system": DEFAULT_SYSTEM_PROMPT,
-            "stream": True
+            "stream": stream
         }
 
     def _prepare_headers(self):
