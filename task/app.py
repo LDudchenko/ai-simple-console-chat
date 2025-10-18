@@ -35,6 +35,7 @@ async def start(stream: bool, client: AIClient) -> None:
             ai_message = client.stream_completion(conversation.get_messages())
         else:
             ai_message = client.get_completion(conversation.get_messages())
+        conversation.add_message(ai_message)
         print(f"{BOT_PREFIX}{ai_message.content}")
     #TODO:
     # Main chat loop that handles user interaction with AI clients.
@@ -45,18 +46,4 @@ async def start(stream: bool, client: AIClient) -> None:
     # 5. Handle the conversation flow
 
 
-#TODO:
-# Create instances of AIClient:
-#   - OpenAIClient
-#   - CustomOpenAIClient
-#   - AnthropicAIClient
-#   - CustomAnthropicAIClient
-# Run application:
-#   Use asyncio.run() method to run the application (call `start` method in `run`)
-# raise NotImplementedError
-asyncio.run(start(False, OpenAIClient(OPENAI_ENDPOINT, "", DEFAULT_SYSTEM_PROMPT, OPENAI_API_KEY)))
-
-
-#TODO:
-# Test that your application works with different clients, additionally try to print in clients full request and
-# response to to check the data that you send and get
+asyncio.run(start(False, OpenAIClient(OPENAI_ENDPOINT, "gpt-4o", DEFAULT_SYSTEM_PROMPT, OPENAI_API_KEY)))
